@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 class MyTextField extends StatelessWidget {
+  final controller;
   final String hintText;
   final bool obscureText;
 
   const MyTextField({
+    super.key,
     required this.hintText,
     required this.obscureText,
+    required this.controller,
   });
 
   @override
@@ -14,6 +17,7 @@ class MyTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: TextField(
+        controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
             enabledBorder: const OutlineInputBorder(

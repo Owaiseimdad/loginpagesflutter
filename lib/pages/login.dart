@@ -1,24 +1,110 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_page/components/image_container.dart';
 import 'package:login_page/components/my_button.dart';
 import 'package:login_page/components/my_textfield.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  LoginPage({super.key});
 
-  void signUserIn() {}
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final usernameController = TextEditingController();
+
+  final passwordController = TextEditingController();
+
+  void signUserIn() async {
+    // show loading cricle.
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(child: CircularProgressIndicator());
+        });
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: usernameController.text, password: passwordController.text);
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+
+      if (e.code == "invalid-email") {
+        invlaidEmail();
+      } else if (e.code == "invalid-credential") {
+        invalidCredentials();
+      } else if (e.code == "wrong-password") {
+        invalidPassword();
+      }
+    }
+
+    Navigator.pop(context);
+  }
+
+  void invlaidEmail() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            backgroundColor: Colors.deepPurple,
+            title: Center(
+              child: Text(
+                'Incorrect Email',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        });
+  }
+
+  void invalidCredentials() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            backgroundColor: Colors.deepPurple,
+            title: Center(
+              child: Text(
+                'Incorrect Email',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        });
+  }
+
+  void invalidPassword() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            backgroundColor: Colors.deepPurple,
+            title: Center(
+              child: Text(
+                'Incorrect Email',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.grey[300],
-        body: SafeArea(
-            child: Center(
+        body: SingleChildScrollView(
+            child: SafeArea(
+                child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //space
               const SizedBox(
-                height: 50,
+                height: 30,
               ),
               //logo
               Icon(Icons.lock, size: 100),
@@ -37,6 +123,7 @@ class LoginPage extends StatelessWidget {
               ),
 
               MyTextField(
+                controller: usernameController,
                 hintText: "username",
                 obscureText: false,
               ),
@@ -46,6 +133,7 @@ class LoginPage extends StatelessWidget {
               ),
 
               MyTextField(
+                controller: passwordController,
                 hintText: "password",
                 obscureText: true,
               ),
@@ -95,7 +183,7 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 40),
 
               // google + apple sign in buttons
               Row(
@@ -111,7 +199,7 @@ class LoginPage extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 30),
 
               // not a member? register now
               Row(
@@ -133,6 +221,6 @@ class LoginPage extends StatelessWidget {
               )
             ],
           ),
-        )));
+        ))));
   }
 }
